@@ -1,5 +1,6 @@
-package com.varosha.springboot.taskmanagement.DTO;
+package com.varosha.springboot.taskmanagement.DTO.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.varosha.springboot.taskmanagement.Enums.Role;
 import com.varosha.springboot.taskmanagement.Enums.UserStatus;
 import lombok.Data;
@@ -7,7 +8,8 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class UserDTO {
+public class CreateUserDTO {
+    @JsonProperty("eMail")
     private String eMail;
     private String password;
     private String fullName;

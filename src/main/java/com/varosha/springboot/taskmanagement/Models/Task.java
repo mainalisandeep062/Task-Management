@@ -31,10 +31,12 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "assignee_id")
     private User assignee;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "created_by_id")
     private User createdBy;
 
     private LocalDateTime createdAt;

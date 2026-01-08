@@ -1,59 +1,59 @@
 package com.varosha.springboot.taskmanagement.converter;
 
-import com.varosha.springboot.taskmanagement.DTO.TaskDTO;
-import com.varosha.springboot.taskmanagement.DTO.UserDTO;
+import com.varosha.springboot.taskmanagement.DTO.task.CreateTaskDTO;
+import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
 import com.varosha.springboot.taskmanagement.Models.Task;
-import com.varosha.springboot.taskmanagement.Models.User;
+import com.varosha.springboot.taskmanagement.Repository.UserRepo;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TaskConverter {
-    public Task toEntity(TaskDTO taskDTO) {
+    private UserRepo userRepo;
+    public  TaskConverter(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
+
+    public Task toEntity(CreateTaskDTO createTaskDTO) {
         Task task = new Task();
-        if (taskDTO == null) {
+        if (createTaskDTO == null) {
             return null;
         }
-        User assignee = new User();
-        User assigner = new User();
-        task.setTitle(taskDTO.getTitle());
-        task.setDescription(taskDTO.getDescription());
-        task.setDueDate(taskDTO.getDueDate());
-        task.setStatus(taskDTO.getStatus());
-        if(taskDTO.getAssignee() != null) {
-            assignee.setFullName(taskDTO.getAssignee().getFullName());
-        }
-        task.setAssignee(assignee);
-        if(taskDTO.getCreatedBy() != null) {
-            assigner.setFullName(taskDTO.getCreatedBy().getFullName());
-        }
-        task.setCreatedBy(assigner);
-        task.setCreatedAt(taskDTO.getCreatedAt());
-        task.setUpdatedAt(taskDTO.getUpdatedAt());
+        task.setTitle(createTaskDTO.getTitle());
+        task.setDescription(createTaskDTO.getDescription());
+        task.setDueDate(createTaskDTO.getDueDate());
+        task.setStatus(createTaskDTO.getStatus());
+
+        if(createTaskDTO.getAssigneeId()!=null)
+            userRepo.findById(createTaskDTO.
+                    getAssigneeId()).
+                    ifPresent(user -> {});
+
+        if(createTaskDTO.getCreatedById()!=null)
+            userRepo.findById(createTaskDTO.getCreatedById()).
+                    ifPresent(user -> {});
+
+
+        task.setCreatedAt(createTaskDTO.getCreatedAt());
         return task;
     }
 
-    public TaskDTO toDTO(Task task) {
-        TaskDTO taskDTO = new TaskDTO();
-        if (task == null) {
-            return null;
+    public TaskResponseDTO toTaskResponseDTO(Task task) {
+        if(task == null) {
+            return  null;
         }
-        UserDTO assignee = new UserDTO();
-        UserDTO assigner = new UserDTO();
-
-        taskDTO.setTitle(task.getTitle());
-        taskDTO.setDescription(task.getDescription());
-        taskDTO.setDueDate(task.getDueDate());
-        taskDTO.setStatus(task.getStatus());
+        TaskResponseDTO taskResponseDTO = new TaskResponseDTO();
+        taskResponseDTO.setTaskId(task.getId());
+        taskResponseDTO.setTitle(task.getTitle());
+        taskResponseDTO.setDescription(task.getDescription());
+        taskResponseDTO.setDueDate(task.getDueDate());
+        taskResponseDTO.setTaskStatus(task.getStatus());
         if(task.getAssignee() != null) {
-            assignee.setFullName(task.getAssignee().getFullName());
+            taskResponseDTO.setAssigneeId(task.getAssignee().getId());
         }
-        taskDTO.setAssignee(assignee);
-        if(task.getCreatedBy() != null) {
-            assigner.setFullName(task.getCreatedBy().getFullName());
-        }
-        taskDTO.setCreatedBy(assigner);
-        taskDTO.setCreatedAt(task.getCreatedAt());
-        taskDTO.setUpdatedAt(task.getUpdatedAt());
+        taskResponseDTO.setCreatedAt(task.getCreatedAt());
+        taskResponseDTO.setUpdatedAt(task.getUpdatedAt());
 
-
-        return  taskDTO;
+        return  taskResponseDTO;
     }
+
 }
