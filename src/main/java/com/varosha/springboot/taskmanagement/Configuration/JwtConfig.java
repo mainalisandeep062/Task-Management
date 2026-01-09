@@ -26,7 +26,6 @@ public class JwtConfig {
 
     @PostConstruct
     protected void init() {
-        // Initialize the key once after the secretString is injected
         this.signingKey = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
     }
 

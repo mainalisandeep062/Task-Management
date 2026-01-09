@@ -4,14 +4,13 @@ import com.varosha.springboot.taskmanagement.DTO.task.CreateTaskDTO;
 import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
 import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
 import com.varosha.springboot.taskmanagement.Services.TaskServices;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.varosha.springboot.taskmanagement.taskCommon.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/api/task")
 public class TaskController {
 
     private final TaskServices taskServices;
@@ -20,23 +19,23 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody CreateTaskDTO createTaskDTO){
+    public ApiResponse createTask(@RequestBody CreateTaskDTO createTaskDTO){
         TaskResponseDTO createdTask = taskServices.createTask(createTaskDTO);
-        return new ResponseEntity<>(createdTask, HttpStatus.OK);
+        return ApiResponse.success(200, "OK", createdTask);
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDTO>> GetAllTasks(){
-        return ResponseEntity.ok(taskServices.getAllTask());
+    public ApiResponse GetAllTasks(){
+        return ApiResponse.success(200, "OK", taskServices.getAllTask());
     }
 
     @GetMapping("/title")
-    public ResponseEntity<TaskResponseDTO> getTaskByTitle(@RequestParam String title){
-        return ResponseEntity.ok(taskServices.findByName(title));
+    public ApiResponse getTaskByTitle(@RequestParam String title){
+        return ApiResponse.success(200, "OK", taskServices.findByName(title));
     }
 
     @GetMapping("/status")
-    public ResponseEntity<TaskResponseDTO> getTaskByStatus(@RequestParam String status){
-        return ResponseEntity.ok(taskServices.findByStatus(TaskStatus.valueOf(status)));
+    public ApiResponse getTaskByStatus(@RequestParam String status){
+        return ApiResponse.success(200, "OK", taskServices.findByStatus(TaskStatus.valueOf(status)));
     }
 }

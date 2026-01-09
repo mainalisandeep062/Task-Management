@@ -2,6 +2,7 @@ package com.varosha.springboot.taskmanagement.ServicesImpl;
 
 import com.varosha.springboot.taskmanagement.DTO.user.CreateUserDTO;
 import com.varosha.springboot.taskmanagement.DTO.user.UserResponseDTO;
+import com.varosha.springboot.taskmanagement.Enums.UserStatus;
 import com.varosha.springboot.taskmanagement.Models.User;
 import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Services.UserServices;
@@ -29,8 +30,13 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
+        String password;
         User user = userConverter.toEntity(createUserDTO);
-        user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+        if(createUserDTO.getPassword() == null){
+            password = "StrongPassword@123";
+        }else
+            password = createUserDTO.getPassword();
+        user.setPassword(passwordEncoder.encode(password));
         user.setCreatedAt(LocalDateTime.now());
         User savedUser = userRepo.save(user);
         return userConverter.toUserResponseDTO(savedUser);
@@ -45,16 +51,29 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-    public UserResponseDTO GetUserByFullName(String fullName) {
+    public UserResponseDTO getUserByFullName(String fullName) {
         return userRepo.findByFullNameIgnoreCase(fullName)
                 .map(userConverter::toUserResponseDTO)
                 .orElseThrow(() -> new RuntimeException("User not found with name : " + fullName));
     }
 
     @Override
-    public UserResponseDTO GetUserByEmail(String email) {
+    public UserResponseDTO getUserByEmail(String email) {
         return userRepo.findByEmail(email)
                 .map(userConverter::toUserResponseDTO)
                 .orElseThrow(() -> new RuntimeException("User not found with email : " + email));
+    }
+
+    @Override
+    public UserResponseDTO deactivateUsrById(Long userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id : " + userId));
+        if(user.getActive() == UserStatus.ACTIVE) {
+            user.setActive(UserStatus.INACTIVE);
+            user.setUpdatedAt(LocalDateTime.now());
+            User updatedUser = userRepo.save(user);
+            return userConverter.toUserResponseDTO(updatedUser);
+        }
+        return null;
     }
 }

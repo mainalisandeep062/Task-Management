@@ -50,7 +50,7 @@ public class TaskServicesImpl implements TaskServices {
 
     @Override
     public TaskResponseDTO findByStatus(TaskStatus status) {
-        return taskRepo.findByTitle(status.toString())
+        return taskRepo.findByStatus(status)
                 .map(taskConverter::toTaskResponseDTO)
                 .orElseThrow(() -> new RuntimeException("No Task is " + status.toString() + " right now!!!"));
     }

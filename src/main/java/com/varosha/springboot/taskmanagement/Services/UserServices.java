@@ -8,6 +8,7 @@ import java.util.List;
 public interface UserServices {
     UserResponseDTO createUser(CreateUserDTO createUserDTO);
     List<UserResponseDTO> getAllUsers();
-    UserResponseDTO GetUserByFullName(String fullName);
-    UserResponseDTO GetUserByEmail(String email);
+    UserResponseDTO getUserByFullName(String fullName);
+    UserResponseDTO getUserByEmail(String email);
+    UserResponseDTO deactivateUsrById(Long userId);
 }

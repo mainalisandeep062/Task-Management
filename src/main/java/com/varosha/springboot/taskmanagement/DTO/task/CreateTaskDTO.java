@@ -1,6 +1,5 @@
 package com.varosha.springboot.taskmanagement.DTO.task;
 
-import com.varosha.springboot.taskmanagement.DTO.user.CreateUserDTO;
 import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
 import lombok.Data;
 

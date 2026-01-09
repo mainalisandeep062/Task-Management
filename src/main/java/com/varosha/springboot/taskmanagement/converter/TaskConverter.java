@@ -23,14 +23,15 @@ public class TaskConverter {
         task.setDueDate(createTaskDTO.getDueDate());
         task.setStatus(createTaskDTO.getStatus());
 
-        if(createTaskDTO.getAssigneeId()!=null)
-            userRepo.findById(createTaskDTO.
-                    getAssigneeId()).
-                    ifPresent(user -> {});
+        if (createTaskDTO.getAssigneeId() != null) {
+            userRepo.findById(createTaskDTO.getAssigneeId())
+                    .ifPresent(task::setAssignee);
+        }
 
-        if(createTaskDTO.getCreatedById()!=null)
-            userRepo.findById(createTaskDTO.getCreatedById()).
-                    ifPresent(user -> {});
+        if (createTaskDTO.getCreatedById() != null) {
+            userRepo.findById(createTaskDTO.getCreatedById())
+                    .ifPresent(task::setCreatedBy);
+        }
 
 
         task.setCreatedAt(createTaskDTO.getCreatedAt());
@@ -49,6 +50,9 @@ public class TaskConverter {
         taskResponseDTO.setTaskStatus(task.getStatus());
         if(task.getAssignee() != null) {
             taskResponseDTO.setAssigneeId(task.getAssignee().getId());
+        }
+        if(task.getAssignee() != null) {
+            taskResponseDTO.setAssigneeName(task.getAssignee().getFullName());
         }
         taskResponseDTO.setCreatedAt(task.getCreatedAt());
         taskResponseDTO.setUpdatedAt(task.getUpdatedAt());
