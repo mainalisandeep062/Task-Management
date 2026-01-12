@@ -7,6 +7,8 @@ import com.varosha.springboot.taskmanagement.Models.User;
 import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Services.AdminServices;
 import com.varosha.springboot.taskmanagement.converter.UserConverter;
+import com.varosha.springboot.taskmanagement.Configuration.ExtractEmail;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,34 +16,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.varosha.springboot.taskmanagement.Configuration.UserDetailsExtractions.*;
-
 @Service
+@RequiredArgsConstructor
 public class AdminServicesImpl implements AdminServices {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final UserConverter userConverter;
-
-    public AdminServicesImpl(UserRepo userRepo,
-                             PasswordEncoder passwordEncoder,
-                             UserConverter userConverter) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-        this.userConverter = userConverter;
-    }
+    private final ExtractEmail extract;
 
     @Override
     public UserResponseDTO createUser(CreateUserDTO createUserDTO, String createdBy) {
-        String password;
         User user = userConverter.toEntity(createUserDTO);
-        if(createUserDTO.getPassword() == null){
-            password = "StrongPassword@123";
-        }else
-            password = createUserDTO.getPassword();
+        String password = createUserDTO.getPassword();
         user.setPassword(passwordEncoder.encode(password));
+        user.setActive(UserStatus.ACTIVE);
         user.setCreatedAt(LocalDateTime.now());
-        user.setCreatedBy(
-            getUserEmail() != null ? getUserEmail() : "System");
+        user.setCreatedBy(extract.getEmail());
         User savedUser = userRepo.save(user);
         return userConverter.toUserResponseDTO(savedUser);
     }
@@ -75,9 +65,7 @@ public class AdminServicesImpl implements AdminServices {
         if(user.getActive() == UserStatus.ACTIVE) {
             user.setActive(UserStatus.INACTIVE);
             user.setUpdatedAt(LocalDateTime.now());
-            user.setUpdatedBy(
-                getUserEmail() != null ? getUserEmail() : "System");
-
+            user.setUpdatedBy(extract.getEmail());
             User updatedUser = userRepo.save(user);
             return userConverter.toUserResponseDTO(updatedUser);
         }

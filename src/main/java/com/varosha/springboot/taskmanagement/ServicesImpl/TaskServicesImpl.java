@@ -5,8 +5,11 @@ import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
 import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
 import com.varosha.springboot.taskmanagement.Models.Task;
 import com.varosha.springboot.taskmanagement.Repository.TaskRepo;
+import com.varosha.springboot.taskmanagement.Repository.UserRepo;
+import com.varosha.springboot.taskmanagement.Configuration.ExtractEmail;
 import com.varosha.springboot.taskmanagement.Services.TaskServices;
 import com.varosha.springboot.taskmanagement.converter.TaskConverter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,19 +17,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TaskServicesImpl implements TaskServices {
-    private TaskRepo taskRepo;
-    private TaskConverter taskConverter;
-
-    public TaskServicesImpl(TaskRepo taskRepo,
-                            TaskConverter taskConverter) {
-        this.taskRepo = taskRepo;
-        this.taskConverter = taskConverter;
-    }
+    private final TaskRepo taskRepo;
+    private final TaskConverter taskConverter;
+    private final UserRepo userRepo;
+    private ExtractEmail extract;
 
     @Override
     public TaskResponseDTO createTask(CreateTaskDTO createTaskDTO) {
         Task task = taskConverter.toEntity(createTaskDTO);
+        task.setStatus(TaskStatus.TODO);
+        task.setCreatedBy(userRepo.findByEmail(extract.getEmail()).
+                orElseThrow(() -> new RuntimeException("User not found with email: " + extract.getEmail())));
         task.setCreatedAt(LocalDateTime.now());
         Task createdTask = taskRepo.save(task);
         return taskConverter.toTaskResponseDTO(createdTask);

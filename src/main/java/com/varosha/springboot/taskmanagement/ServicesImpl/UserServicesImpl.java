@@ -7,11 +7,11 @@ import com.varosha.springboot.taskmanagement.Services.UserServices;
 import com.varosha.springboot.taskmanagement.converter.TaskConverter;
 import com.varosha.springboot.taskmanagement.converter.UserConverter;
 import lombok.RequiredArgsConstructor;
+import com.varosha.springboot.taskmanagement.Configuration.ExtractEmail;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.varosha.springboot.taskmanagement.Configuration.UserDetailsExtractions.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,24 +19,23 @@ public class UserServicesImpl implements UserServices {
     private final UserRepo userRepo;
     private final UserConverter userConverter;
     private final TaskConverter taskConverter;
+    private final ExtractEmail extract;
 
     @Override
     public UserResponseDTO getCurrentUserProfile() {
-        String userEmail = getUserEmail();
-        return userRepo.findByEmail(userEmail)
+        return userRepo.findByEmail(extract.getEmail())
                 .map(userConverter::toUserResponseDTO)
-                .orElseThrow(() -> new RuntimeException("User not found with email : " + userEmail));
+                .orElseThrow(() -> new RuntimeException("User not found with email : " + extract.getEmail()));
     }
 
     @Override
 public List<TaskResponseDTO> getUserTasks() {
-        String userEmail = getUserEmail();
-        List<TaskResponseDTO> tasks = userRepo.findByEmail(userEmail)
+        List<TaskResponseDTO> tasks = userRepo.findByEmail(extract.getEmail())
                 .map(user -> user.getTasks()
                         .stream()
                         .map(taskConverter::toTaskResponseDTO)
                         .toList())
-                .orElseThrow(() -> new RuntimeException("User not found with email : " + userEmail));
+                .orElseThrow(() -> new RuntimeException("User not found with email : " + extract.getEmail()));
         return tasks;
     }
 }

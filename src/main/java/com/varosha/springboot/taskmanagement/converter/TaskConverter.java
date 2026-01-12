@@ -28,13 +28,6 @@ public class TaskConverter {
                     .ifPresent(task::setAssignee);
         }
 
-        if (createTaskDTO.getCreatedById() != null) {
-            userRepo.findById(createTaskDTO.getCreatedById())
-                    .ifPresent(task::setCreatedBy);
-        }
-
-
-        task.setCreatedAt(createTaskDTO.getCreatedAt());
         return task;
     }
 
