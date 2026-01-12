@@ -36,4 +36,9 @@ public class TaskController {
     public ApiResponse getTaskByStatus(@RequestParam String status){
         return ApiResponse.success(200, "OK", taskServices.findByStatus(TaskStatus.valueOf(status)));
     }
+
+    @GetMapping("/assignee")
+    public ApiResponse getTaskByAssigneeEmail(@RequestParam String email){
+        return ApiResponse.success(200, "OK", taskServices.getTaskByAssigneeEmail(email));
+    }
 }
