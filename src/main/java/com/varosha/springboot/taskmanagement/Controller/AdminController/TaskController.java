@@ -1,4 +1,4 @@
-package com.varosha.springboot.taskmanagement.Controller;
+package com.varosha.springboot.taskmanagement.Controller.AdminController;
 
 import com.varosha.springboot.taskmanagement.DTO.task.CreateTaskDTO;
 import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
@@ -6,8 +6,6 @@ import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
 import com.varosha.springboot.taskmanagement.Services.TaskServices;
 import com.varosha.springboot.taskmanagement.taskCommon.ApiResponse;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/task")

@@ -14,5 +14,7 @@ public interface TaskServices {
 
     TaskResponseDTO findByStatus(TaskStatus status);
 
+    TaskResponseDTO getTaskByAssigneeEmail(String assigneeEmail);
+
     TaskResponseDTO updateTask(CreateTaskDTO taskDTO);
 }

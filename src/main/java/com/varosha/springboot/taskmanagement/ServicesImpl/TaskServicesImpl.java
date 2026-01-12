@@ -42,7 +42,6 @@ public class TaskServicesImpl implements TaskServices {
 
     @Override
     public TaskResponseDTO findByName(String title) {
-
         return taskRepo.findByTitle(title)
                 .map(taskConverter::toTaskResponseDTO)
                 .orElseThrow(() -> new RuntimeException("Task not found with Title : " + title));
@@ -54,6 +53,14 @@ public class TaskServicesImpl implements TaskServices {
                 .map(taskConverter::toTaskResponseDTO)
                 .orElseThrow(() -> new RuntimeException("No Task is " + status.toString() + " right now!!!"));
     }
+
+    @Override
+public TaskResponseDTO getTaskByAssigneeEmail(String assigneeEmail) {
+        return taskRepo.findByAssigneeEmail(assigneeEmail)
+                .map(taskConverter::toTaskResponseDTO)
+                .orElseThrow(() -> new RuntimeException("No Task assigned to user with ID : " + assigneeEmail));
+    }
+
 
     @Override
     public TaskResponseDTO updateTask(CreateTaskDTO taskDTO) {

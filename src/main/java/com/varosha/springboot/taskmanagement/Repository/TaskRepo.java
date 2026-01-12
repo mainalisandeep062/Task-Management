@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface TaskRepo extends JpaRepository<Task,Long>{
     Optional<Task> findByTitle(String title);
     Optional<Task> findByStatus(TaskStatus status);
+    Optional<Task> findByAssigneeEmail(String assigneeEmail);
 }
