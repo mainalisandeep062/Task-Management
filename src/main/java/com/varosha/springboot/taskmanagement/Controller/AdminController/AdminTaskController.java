@@ -7,12 +7,14 @@ import com.varosha.springboot.taskmanagement.Services.TaskServices;
 import com.varosha.springboot.taskmanagement.taskCommon.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/task")
-public class TaskController {
+public class AdminTaskController {
 
     private final TaskServices taskServices;
-    public TaskController(TaskServices taskServices) {
+    public AdminTaskController(TaskServices taskServices) {
         this.taskServices = taskServices;
     }
 
@@ -25,11 +27,6 @@ public class TaskController {
     @GetMapping
     public ApiResponse GetAllTasks(){
         return ApiResponse.success(200, "OK", taskServices.getAllTask());
-    }
-
-    @GetMapping("/title")
-    public ApiResponse getTaskByTitle(@RequestParam String title){
-        return ApiResponse.success(200, "OK", taskServices.findByName(title));
     }
 
     @GetMapping("/status")

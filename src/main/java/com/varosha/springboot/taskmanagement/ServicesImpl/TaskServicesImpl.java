@@ -58,10 +58,11 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     @Override
-    public TaskResponseDTO getTaskByAssigneeEmail(String assigneeEmail) {
+    public List<TaskResponseDTO> getTaskByAssigneeEmail(String assigneeEmail) {
         return taskRepo.findByAssigneeEmail(assigneeEmail)
+                .stream()
                 .map(taskConverter::toTaskResponseDTO)
-                .orElseThrow(() -> new RuntimeException("No Task assigned to user with ID : " + assigneeEmail));
+                .collect(Collectors.toList());
     }
 
 

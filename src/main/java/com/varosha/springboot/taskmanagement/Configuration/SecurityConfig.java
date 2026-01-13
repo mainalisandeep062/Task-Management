@@ -28,9 +28,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/task/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/api/user/**").hasAnyAuthority("USER", "ADMIN")
-                        .anyRequest().hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers("/api/task/**").hasAnyAuthority("EMPLOYEE", "ADMIN")
+                        .requestMatchers("/api/user/**").hasAnyAuthority("EMPLOYEE", "ADMIN")
+                        .requestMatchers("/api/user/my-profile").hasAnyAuthority("EMPLOYEE", "ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
