@@ -14,4 +14,5 @@ public class ExtractEmail {
             return auth.getName();
         }throw new RuntimeException("No authenticated user found in the security context");
     }
+
 }

@@ -1,0 +1,18 @@
+package com.varosha.springboot.taskmanagement.Services;
+
+import com.varosha.springboot.taskmanagement.DTO.notification.NotificationRequestDTO;
+import com.varosha.springboot.taskmanagement.DTO.notification.NotificationResponseDTO;
+
+
+
+import java.util.List;
+
+public interface NotificationServices {
+    NotificationResponseDTO send(NotificationRequestDTO requestDto);
+
+    List<NotificationResponseDTO> getMyNotifications();
+
+    String markAsRead(Long notificationId);
+
+    long getUnreadCount();
+}

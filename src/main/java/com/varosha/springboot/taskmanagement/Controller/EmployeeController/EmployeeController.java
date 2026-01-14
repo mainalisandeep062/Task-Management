@@ -34,4 +34,9 @@ public class EmployeeController {
         return ApiResponse.success(200, "OK", commentBody);
     }
 
+    @GetMapping("/task-comments/{taskId}")
+    public ApiResponse getCommentsByTaskId(@PathVariable Long taskId) {
+        return ApiResponse.success(200, "OK", commentServices.getCommentsByTaskId(taskId));
+    }
+
 }
