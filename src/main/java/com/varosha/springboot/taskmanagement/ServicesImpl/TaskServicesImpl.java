@@ -22,14 +22,13 @@ public class TaskServicesImpl implements TaskServices {
     private final TaskRepo taskRepo;
     private final TaskConverter taskConverter;
     private final UserRepo userRepo;
-    private ExtractEmail extract;
 
     @Override
     public TaskResponseDTO createTask(CreateTaskDTO createTaskDTO) {
         Task task = taskConverter.toEntity(createTaskDTO);
         task.setStatus(TaskStatus.TODO);
-        task.setCreatedBy(userRepo.findByEmail(extract.getEmail()).
-                orElseThrow(() -> new RuntimeException("User not found with email: " + extract.getEmail())));
+        task.setCreatedBy(userRepo.findByEmail(new ExtractEmail().getEmail()).
+                orElseThrow(() -> new RuntimeException("User not found with email: " + new ExtractEmail().getEmail())));
         task.setCreatedAt(LocalDateTime.now());
         Task createdTask = taskRepo.save(task);
         return taskConverter.toTaskResponseDTO(createdTask);

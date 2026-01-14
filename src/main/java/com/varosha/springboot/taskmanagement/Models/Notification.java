@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private String title;
@@ -25,7 +25,7 @@ public class Notification {
     private boolean isRead = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "recipient_id", nullable = false)
     private User recipient;
 
     private LocalDateTime createdAt;

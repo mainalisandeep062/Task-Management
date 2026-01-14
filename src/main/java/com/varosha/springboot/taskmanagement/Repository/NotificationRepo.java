@@ -26,11 +26,11 @@ public interface NotificationRepo extends JpaRepository<Notification, Long> {
             """, nativeQuery = true)
     long countUnreadByRecipientId(@Param("recipientId") Long recipientId);
 
-    @Query(value = """
-            SELECT * from notification
-            where recipient_id = :recipeintId
-            AND is_read = false
-            """, nativeQuery = true)
-    List<Notification> findUnreadNotification(@Param("recipientId") Long recipientId);
+//    @Query(value = """
+//            SELECT * from notification
+//            where recipient_id = :recipeintId
+//            AND is_read = false
+//            """, nativeQuery = true)
+//    List<Notification> findUnreadNotification(@Param("recipientId") Long recipientId);
 
 }

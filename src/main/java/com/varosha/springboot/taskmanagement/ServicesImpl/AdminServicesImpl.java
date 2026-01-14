@@ -1,4 +1,4 @@
-package com.varosha.springboot.taskmanagement.ServicesImpl.AdminServices;
+package com.varosha.springboot.taskmanagement.ServicesImpl;
 
 import com.varosha.springboot.taskmanagement.DTO.user.CreateUserDTO;
 import com.varosha.springboot.taskmanagement.DTO.user.UserResponseDTO;

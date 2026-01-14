@@ -26,7 +26,7 @@ public class NotificationServicesImpl implements NotificationServices {
     @Override
     public NotificationResponseDTO send(NotificationRequestDTO requestDto) {
         Notification notification = converter.toEntity(requestDto);
-        if (userRepo.findByUserId(requestDto.getRecipientId()).isEmpty()) {
+        if (userRepo.findById(requestDto.getRecipientId()).isEmpty()) {
             return null;
         }
         notification.setCreatedAt(LocalDateTime.now());
