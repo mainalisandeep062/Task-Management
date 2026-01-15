@@ -14,7 +14,7 @@ public interface TaskServices {
     TaskResponseDTO findByName(String name);
 
     @Query("Select t from Task t where t.status = ?1")
-    TaskResponseDTO findByStatus(TaskStatus status);
+    List<TaskResponseDTO> findByStatus(TaskStatus status);
 
     List<TaskResponseDTO> getTaskByAssigneeEmail(String assigneeEmail);
 }

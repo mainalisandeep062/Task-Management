@@ -9,10 +9,12 @@ import com.varosha.springboot.taskmanagement.Repository.NotificationRepo;
 import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Services.NotificationServices;
 import com.varosha.springboot.taskmanagement.converter.NotificationConverter;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,17 +22,32 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NotificationServicesImpl implements NotificationServices {
     private final NotificationRepo notificationRepo;
+    private final SimpMessagingTemplate messagingTemplate;
     private final NotificationConverter converter;
     private final UserRepo userRepo;
 
     @Override
     public NotificationResponseDTO send(NotificationRequestDTO requestDto) {
+        // Fetch the user once. If not found, throw an exception or return null.
+        User recipient = userRepo.findById(requestDto.getRecipientId())
+                .orElseThrow(() -> new RuntimeException("Recipient not found with ID: " + requestDto.getRecipientId()));
+
         Notification notification = converter.toEntity(requestDto);
-        if (userRepo.findById(requestDto.getRecipientId()).isEmpty()) {
-            return null;
-        }
+        notification.setRecipient(recipient);
         notification.setCreatedAt(LocalDateTime.now());
-        return converter.toDto(notificationRepo.save(notification));
+        notification.setRead(false);
+
+        Notification savedNotification = notificationRepo.save(notification);
+        NotificationResponseDTO responseDto = converter.toDto(savedNotification);
+
+        // Push Real-time via WebSocket
+        messagingTemplate.convertAndSendToUser(
+                recipient.getEmail(),
+                "/queue/notifications",
+                responseDto // Send the DTO, it's cleaner for the frontend
+        );
+
+        return responseDto;
     }
 
     @Override
@@ -39,7 +56,18 @@ public class NotificationServicesImpl implements NotificationServices {
         User currentUser = userRepo.findByEmail(email.getEmail()).orElse(null);
         Long recipientId = currentUser.getId();
 
-        return notificationRepo.findByRecipientId(recipientId).stream().map(converter::toDto).collect(Collectors.toList());
+        return notificationRepo.findByRecipientId(recipientId)
+                                .stream()
+                                .map(converter::toDto)
+                                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NotificationResponseDTO> getUnreadNotifications(){
+        return getMyNotifications()
+                .stream()
+                .filter(n -> !n.isRead())
+                .collect(Collectors.toList());
     }
 
     @Override

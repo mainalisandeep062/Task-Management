@@ -27,8 +27,7 @@ public class AdminServicesImpl implements AdminServices {
     @Override
     public UserResponseDTO createUser(CreateUserDTO createUserDTO, String createdBy) {
         User user = userConverter.toEntity(createUserDTO);
-        String password = createUserDTO.getPassword();
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
         user.setActive(UserStatus.ACTIVE);
         user.setCreatedAt(LocalDateTime.now());
         user.setCreatedBy(extract.getEmail());

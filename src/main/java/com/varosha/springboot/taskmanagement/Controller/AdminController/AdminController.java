@@ -6,6 +6,8 @@ import com.varosha.springboot.taskmanagement.Services.AdminServices;
 import com.varosha.springboot.taskmanagement.taskCommon.ApiResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -17,28 +19,28 @@ public class AdminController {
     }
 
     @PostMapping("/create-user")
-    public ApiResponse createUser(@RequestBody CreateUserDTO createUserDTO) {
+    public ApiResponse<UserResponseDTO> createUser(@RequestBody CreateUserDTO createUserDTO) {
         UserResponseDTO createdUser = adminServices.createUser(createUserDTO, null);
         return ApiResponse.success(201, "Created", createdUser);
     }
 
     @GetMapping("/all-user")
-    public ApiResponse getAllUsers() {
+    public ApiResponse<List<UserResponseDTO>> getAllUsers() {
         return ApiResponse.success(200, "OK", adminServices.getAllUsers());
     }
 
     @GetMapping("/name")
-    public ApiResponse getUserByFullName(@RequestParam String fullName) {
+    public ApiResponse<UserResponseDTO> getUserByFullName(@RequestParam String fullName) {
         return ApiResponse.success(200, "OK", adminServices.getUserByFullName(fullName));
     }
 
     @GetMapping("/email")
-    public ApiResponse getUserByEmail(@RequestParam String email) {
+    public ApiResponse<UserResponseDTO> getUserByEmail(@RequestParam String email) {
         return ApiResponse.success(200, "OK", adminServices.getUserByEmail(email));
     }
 
     @PatchMapping("/{userId}/deactivate")
-    public ApiResponse deactivateUserById(@PathVariable Long userId) {
+    public ApiResponse<UserResponseDTO> deactivateUserById(@PathVariable Long userId) {
         return ApiResponse.success(200,
                 "User Deactivated Successfully!!",
                 adminServices.deactivateUsrById(userId, null));

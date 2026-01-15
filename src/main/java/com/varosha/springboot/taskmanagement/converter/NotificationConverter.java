@@ -15,8 +15,6 @@ public class NotificationConverter {
         notification.setTitle(requestDto.getTitle());
         notification.setMessage(requestDto.getMessage());
         notification.setType(requestDto.getType());
-        notification.setRead(false);
-
         return notification;
     }
 

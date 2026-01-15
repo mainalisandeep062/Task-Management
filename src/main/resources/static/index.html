@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager - Notification Center</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        .hidden { display: none !important; }
+        #app-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; text-align: center; }
+
+        /* Bell Icon Styling */
+        .bell-container { position: relative; display: inline-block; cursor: pointer; margin-top: 20px; }
+        .bell-icon { font-size: 40px; }
+        .badge {
+            position: absolute; top: -5px; right: -5px;
+            background: red; color: white; border-radius: 50%;
+            padding: 5px 8px; font-size: 12px; font-weight: bold;
+        }
+
+        .notification-list {
+            border: 1px solid #ddd; margin-top: 10px; max-height: 200px; overflow-y: auto;
+            text-align: left; list-style: none; padding: 0;
+        }
+        .notification-item { padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        input { width: 94%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="login-section">
+        <h2>Task Login</h2>
+        <div class="input-group">
+            <input type="email" id="email" placeholder="Email (e.g., sandeep@yopmail.com)">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button onclick="handleLogin()">Login</button>
+    </div>
+
+    <div id="dashboard-section" class="hidden">
+        <h2 id="greeting">Hello, User!</h2>
+
+        <div class="bell-container" onclick="toggleNotifications()">
+            <span class="bell-icon">🔔</span>
+            <span id="notif-count" class="badge">0</span>
+        </div>
+
+        <ul id="notif-list" class="notification-list hidden">
+        </ul>
+
+        <button style="margin-top: 20px; background: #dc3545;" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<script>
+    let jwtToken = null;
+    let stompClient = null;
+    let unreadCount = 0;
+
+    async function handleLogin() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // 1. Authenticate and get JWT
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            jwtToken = data.token; // Extracts only JWT
+
+            // 2. Fetch User Info (Greeting)
+            fetchUserInfo();
+
+            // 3. Setup WebSocket & Load History
+            connectWebSocket();
+            fetchUnreadHistory();
+
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+        } else {
+            alert("Login Failed!");
+        }
+    }
+
+    function fetchUserInfo() {
+        // Mocking the greeting based on your requirement
+        // In reality, call GET /api/users/me with Bearer token
+        const email = document.getElementById('email').value;
+        document.getElementById('greeting').innerText = `Welcome, ${email.split('@')[0]}!`;
+    }
+
+    function fetchUnreadHistory() {
+        // GET /api/notifications/unread
+        // This is your "Catch-up" logic
+        fetch('/api/notifications/unread', {
+            headers: { 'Authorization': `Bearer ${jwtToken}` }
+        })
+            .then(res => res.json())
+            .then(data => {
+                unreadCount = data.length;
+                updateUI(data);
+            });
+    }
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws'); // Your WebSocket endpoint
+        stompClient = Stomp.over(socket);
+
+        const headers = { 'Authorization': `Bearer ${jwtToken}` };
+
+        stompClient.connect(headers, (frame) => {
+            console.log('Connected: ' + frame);
+
+            // Subscribe to private notifications
+            stompClient.subscribe('/user/queue/notifications', (message) => {
+                const notification = JSON.parse(message.body);
+                unreadCount++;
+                addNotificationToList(notification);
+            });
+        });
+    }
+
+    function addNotificationToList(notif) {
+        const list = document.getElementById('notif-list');
+        const item = document.createElement('li');
+        item.className = 'notification-item';
+        item.innerText = notif.content || notif;
+        list.prepend(item);
+        document.getElementById('notif-count').innerText = unreadCount;
+    }
+
+    function updateUI(notifications) {
+        document.getElementById('notif-count').innerText = unreadCount;
+        notifications.forEach(n => addNotificationToList(n));
+    }
+
+    function toggleNotifications() {
+        const list = document.getElementById('notif-list');
+        list.classList.toggle('hidden');
+    }
+
+    function logout() {
+        location.reload(); // Simple reset
+    }
+</script>
+</body>
+</html>

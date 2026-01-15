@@ -1,7 +1,9 @@
 package com.varosha.springboot.taskmanagement.ServicesImpl;
 
+import com.varosha.springboot.taskmanagement.DTO.notification.NotificationRequestDTO;
 import com.varosha.springboot.taskmanagement.DTO.task.CreateTaskDTO;
 import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
+import com.varosha.springboot.taskmanagement.Enums.NotificationType;
 import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
 import com.varosha.springboot.taskmanagement.Models.Task;
 import com.varosha.springboot.taskmanagement.Repository.TaskRepo;
@@ -22,6 +24,7 @@ public class TaskServicesImpl implements TaskServices {
     private final TaskRepo taskRepo;
     private final TaskConverter taskConverter;
     private final UserRepo userRepo;
+    private final NotificationServicesImpl notificationService;
 
     @Override
     public TaskResponseDTO createTask(CreateTaskDTO createTaskDTO) {
@@ -31,6 +34,15 @@ public class TaskServicesImpl implements TaskServices {
                 orElseThrow(() -> new RuntimeException("User not found with email: " + new ExtractEmail().getEmail())));
         task.setCreatedAt(LocalDateTime.now());
         Task createdTask = taskRepo.save(task);
+
+        notificationService.send(NotificationRequestDTO.builder()
+                    .recipientId(task.getAssignee().getId())
+                    .title("You were assigned a new task! \r\n"
+                            + task.getTitle() + "Due :" + task.getDueDate())
+                    .message(task.getDescription())
+                    .type(NotificationType.TASK_ASSIGNED)
+                    .build());
+
         return taskConverter.toTaskResponseDTO(createdTask);
     }
 
@@ -50,10 +62,11 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     @Override
-    public TaskResponseDTO findByStatus(TaskStatus status) {
+    public List<TaskResponseDTO> findByStatus(TaskStatus status) {
         return taskRepo.findByStatus(status)
+                .stream()
                 .map(taskConverter::toTaskResponseDTO)
-                .orElseThrow(() -> new RuntimeException("No Task is " + status.toString() + " right now!!!"));
+                .collect(Collectors.toList());
     }
 
     @Override

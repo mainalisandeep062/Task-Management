@@ -19,23 +19,23 @@ public class AdminTaskController {
     }
 
     @PostMapping
-    public ApiResponse createTask(@RequestBody CreateTaskDTO createTaskDTO){
+    public ApiResponse<TaskResponseDTO> createTask(@RequestBody CreateTaskDTO createTaskDTO){
         TaskResponseDTO createdTask = taskServices.createTask(createTaskDTO);
         return ApiResponse.success(200, "OK", createdTask);
     }
 
     @GetMapping
-    public ApiResponse GetAllTasks(){
+    public ApiResponse<List<TaskResponseDTO>> GetAllTasks(){
         return ApiResponse.success(200, "OK", taskServices.getAllTask());
     }
 
     @GetMapping("/status")
-    public ApiResponse getTaskByStatus(@RequestParam String status){
+    public ApiResponse<List<TaskResponseDTO>> getTaskByStatus(@RequestParam String status){
         return ApiResponse.success(200, "OK", taskServices.findByStatus(TaskStatus.valueOf(status)));
     }
 
     @GetMapping("/assignee")
-    public ApiResponse getTaskByAssigneeEmail(@RequestParam String email){
+    public ApiResponse<List<TaskResponseDTO>> getTaskByAssigneeEmail(@RequestParam String email){
         return ApiResponse.success(200, "OK", taskServices.getTaskByAssigneeEmail(email));
     }
 }

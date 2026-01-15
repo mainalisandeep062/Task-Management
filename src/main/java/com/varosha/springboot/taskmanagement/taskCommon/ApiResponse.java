@@ -9,17 +9,18 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponse {
+public class ApiResponse<T> { // Use generics
     private int status;
     private String message;
     private OffsetDateTime timestamp;
-    private Object body;
+    private T body; // Typed body
 
-    public static ApiResponse success(int status, String message, Object body) {
-        return new ApiResponse(status, message, OffsetDateTime.now(), body);
+    public static <T> ApiResponse<T> success(int status, String message, T body) {
+        return new ApiResponse<>(status, message, OffsetDateTime.now(), body);
     }
 
-    public static ApiResponse error(int status, String message, Object body) {
-        return new ApiResponse(status, message, OffsetDateTime.now(), body);
+    public static <T> ApiResponse<T> error(int status, String message, T body) {
+        return new ApiResponse<>(status, message, OffsetDateTime.now(), body);
     }
 }
+

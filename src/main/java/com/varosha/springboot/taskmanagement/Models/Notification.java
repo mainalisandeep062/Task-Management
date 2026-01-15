@@ -2,13 +2,15 @@ package com.varosha.springboot.taskmanagement.Models;
 
 import com.varosha.springboot.taskmanagement.Enums.NotificationType;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

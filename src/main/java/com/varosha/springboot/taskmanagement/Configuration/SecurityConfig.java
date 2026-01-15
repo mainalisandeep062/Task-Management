@@ -26,11 +26,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/v3/api-docs",
+                                        "/ws-notifications/**", "/v3/api-docs/**",
+                                        "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/task/**").hasAnyAuthority("EMPLOYEE", "ADMIN")
-                        .requestMatchers("/api/user/**").hasAnyAuthority("EMPLOYEE", "ADMIN")
-                        .requestMatchers("/api/user/my-profile").hasAnyAuthority("EMPLOYEE", "ADMIN")
+                        .requestMatchers("/api/task/**", "/api/user/**")
+                                            .hasAnyAuthority("EMPLOYEE", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

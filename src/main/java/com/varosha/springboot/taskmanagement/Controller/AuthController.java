@@ -16,7 +16,7 @@ public class AuthController {
     private final AuthServices authService;
 
     @PostMapping("/login")
-    public ApiResponse login(
+    public ApiResponse<LogInResponseDTO> login(
             @Valid @RequestBody LogInRequestDTO loginRequest) {
         LogInResponseDTO response = authService.login(loginRequest);
         return ApiResponse.success(200, "OK", response);

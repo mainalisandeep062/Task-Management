@@ -14,5 +14,7 @@ public interface NotificationServices {
 
     String markAsRead(Long notificationId);
 
+    List<NotificationResponseDTO> getUnreadNotifications();
+
     long getUnreadCount();
 }

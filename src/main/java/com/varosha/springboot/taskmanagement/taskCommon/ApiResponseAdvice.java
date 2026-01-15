@@ -13,16 +13,25 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
+        // Get the class that is handling the request
+        Class<?> controllerClass = returnType.getContainingClass();
+
+        // Disable wrapping for SpringDoc/Swagger internal controllers
+        return !controllerClass.getPackage().getName().contains("org.springdoc") &&
+                !controllerClass.getPackage().getName().contains("org.springframework.boot.autoconfigure.web");
     }
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof ApiResponse) {
+
+        // Double check: don't wrap if it's already an ApiResponse or if the path is for docs
+        String path = request.getURI().getPath();
+        if (body instanceof ApiResponse || path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
             return body;
         }
+
         return ApiResponse.success(200, "OK", body);
     }
 }

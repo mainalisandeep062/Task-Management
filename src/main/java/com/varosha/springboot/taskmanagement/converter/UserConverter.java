@@ -14,27 +14,10 @@ public class UserConverter {
         user.setEmail(createUserDTO.getEMail());
         user.setPassword(createUserDTO.getPassword());
         user.setRole(createUserDTO.getRole());
-        user.setActive(createUserDTO.getActive());
-        user.setCreatedBy(createUserDTO.getCreatedBy());
-        user.setCreatedAt(createUserDTO.getCreatedAt());
-        user.setUpdatedBy(createUserDTO.getUpdatedBy());
-        user.setUpdatedAt(createUserDTO.getUpdatedAt());
+
         return user;
     }
 
-    public CreateUserDTO toCreateUserDTO(User user) {
-        if(user == null) return null;
-        CreateUserDTO createUserDTO = new CreateUserDTO();
-        createUserDTO.setFullName(user.getFullName());
-        createUserDTO.setEMail(user.getEmail());
-        createUserDTO.setRole(user.getRole());
-        createUserDTO.setActive(user.getActive());
-        createUserDTO.setCreatedBy(user.getCreatedBy());
-        createUserDTO.setCreatedAt(user.getCreatedAt());
-        createUserDTO.setUpdatedBy(user.getUpdatedBy());
-        createUserDTO.setUpdatedAt(user.getUpdatedAt());
-        return createUserDTO;
-    }
 
     public UserResponseDTO toUserResponseDTO(User user) {
         if(user == null) return null;
