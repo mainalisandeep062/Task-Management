@@ -38,7 +38,8 @@ public class NotificationController {
 
     @PatchMapping("/{id}/read")
     public ApiResponse<NotificationResponseDTO> markAsRead(@PathVariable Long id) {
-        notificationServices.markAsRead(id);
-        return ApiResponse.success(200, "Notification marked as read", null);
+        // Return the result of the service call
+        NotificationResponseDTO updated = notificationServices.markAsRead(id);
+        return ApiResponse.success(200, "Notification marked as read", updated);
     }
 }

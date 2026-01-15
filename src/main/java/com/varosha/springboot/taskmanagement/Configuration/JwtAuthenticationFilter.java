@@ -29,32 +29,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
 
+        // 1. Guard Clause: Skip if no Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7);
-        userEmail = jwtConfig.extractEmail(jwt);
+        final String jwt = authHeader.substring(7);
 
-
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (jwtConfig.validateToken(jwt)) {
-                String role = jwtConfig.extractRole(jwt);
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userEmail,
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority(role))
-                );
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+        // 2. Structural Check: Prevents MalformedJwtException (must be x.y.z)
+        if (jwt.isEmpty() || jwt.split("\\.").length != 3) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        try {
+            final String userEmail = jwtConfig.extractEmail(jwt);
+
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (jwtConfig.validateToken(jwt)) {
+                    String role = jwtConfig.extractRole(jwt);
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userEmail,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority(role))
+                    );
+
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("JWT validation failed: " + e.getMessage());
+        }
+
         filterChain.doFilter(request, response);
     }
 }

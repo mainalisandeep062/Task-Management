@@ -9,6 +9,7 @@ import com.varosha.springboot.taskmanagement.Repository.NotificationRepo;
 import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Services.NotificationServices;
 import com.varosha.springboot.taskmanagement.converter.NotificationConverter;
+import jakarta.transaction.Transactional;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -71,21 +72,43 @@ public class NotificationServicesImpl implements NotificationServices {
     }
 
     @Override
+    @Transactional
     public String markAllAsRead(String email) {
-        notificationRepo.findByRecipientId(userRepo.findByEmail(email)
-                        .orElseThrow(() -> new RuntimeException("User not found")).getId())
-                .forEach(n -> n.setRead(true));
-        return "All Notification Marked as read!!";
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Notification> unreadNotifs = notificationRepo.findByRecipientId(user.getId())
+                .stream()
+                .filter(n -> !n.isRead())
+                .toList();
+
+        if (!unreadNotifs.isEmpty()) {
+            unreadNotifs.forEach(n -> n.setRead(true));
+            notificationRepo.saveAll(unreadNotifs);
+
+            messagingTemplate.convertAndSendToUser(
+                    email,
+                    "/queue/notifications/read-updates",
+                    "ALL_READ"
+            );
+        }
+        return "All Notifications Marked as read!!";
     }
 
     @Override
-    public String markAsRead(Long notificationId) {
+    public NotificationResponseDTO markAsRead(Long notificationId) {
         Notification notification = notificationRepo.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         notification.setRead(true);
         notificationRepo.save(notification);
 
-        return "Message marked as Read!!!";
+        messagingTemplate.convertAndSendToUser(
+                notification.getRecipient().getEmail(),
+                "/queue/notifications/read-updates",
+                converter.toDto(notification)
+        );
+
+        return converter.toDto(notification);
     }
 
     @Override
