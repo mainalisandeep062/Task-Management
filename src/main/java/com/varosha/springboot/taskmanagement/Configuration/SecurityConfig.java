@@ -26,11 +26,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/v3/api-docs",
+                        .requestMatchers("/", "/index.html", "/api/auth/**", "/v3/api-docs",
                                         "/ws-notifications/**", "/v3/api-docs/**",
-                                        "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                        "/swagger-ui/**", "/swagger-ui.html", "/static/** ").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/task/**", "/api/user/**")
+                        .requestMatchers("/api/task/**", "/api/user/**", "/api/notification/**")
                                             .hasAnyAuthority("EMPLOYEE", "ADMIN")
                         .anyRequest().authenticated()
                 )

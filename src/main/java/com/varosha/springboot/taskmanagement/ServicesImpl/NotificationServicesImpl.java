@@ -57,17 +57,25 @@ public class NotificationServicesImpl implements NotificationServices {
         Long recipientId = currentUser.getId();
 
         return notificationRepo.findByRecipientId(recipientId)
-                                .stream()
-                                .map(converter::toDto)
-                                .collect(Collectors.toList());
+                .stream()
+                .map(converter::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<NotificationResponseDTO> getUnreadNotifications(){
-        return getMyNotifications()
+    public List<NotificationResponseDTO> getUnreadNotifications(String email) {
+        return notificationRepo.findByRecipientId(userRepo.findByEmail(email).orElse(null).getId())
                 .stream()
-                .filter(n -> !n.isRead())
+                .map(converter::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String markAllAsRead(String email) {
+        notificationRepo.findByRecipientId(userRepo.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("User not found")).getId())
+                .forEach(n -> n.setRead(true));
+        return "All Notification Marked as read!!";
     }
 
     @Override

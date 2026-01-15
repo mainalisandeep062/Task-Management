@@ -4,6 +4,7 @@ import com.varosha.springboot.taskmanagement.DTO.notification.NotificationRespon
 import com.varosha.springboot.taskmanagement.Services.NotificationServices;
 import com.varosha.springboot.taskmanagement.taskCommon.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +27,13 @@ public class NotificationController {
     }
 
     @GetMapping("/unread")
-    public ApiResponse<List<NotificationResponseDTO>> getMyUnreadNotifications(){
-        return ApiResponse.success(200, "OK", notificationServices.getUnreadNotifications());
+    public ApiResponse<List<NotificationResponseDTO>> getMyUnreadNotifications(@AuthenticationPrincipal String email){
+        return ApiResponse.success(200, "OK", notificationServices.getUnreadNotifications(email));
+    }
+
+    @PatchMapping()
+    public ApiResponse<String> markAllAsRead(@AuthenticationPrincipal String email){
+        return ApiResponse.success(200, "OK", notificationServices.markAllAsRead(email));
     }
 
     @PatchMapping("/{id}/read")
