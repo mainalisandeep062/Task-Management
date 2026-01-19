@@ -12,4 +12,3 @@ EXPOSE 8080
 
 # Command to run your app
 ENTRYPOINT ["java", "-jar", "app.jar"]
-`
