@@ -21,7 +21,7 @@ public class StandUpReminderService {
     private final NotificationServices notificationServices;
 
     // Runs at 2:00 PM every day (Cron: sec min hour day month weekday)
-    @Scheduled(cron = "0 30 12 * * *")
+    @Scheduled(cron = "0 0 14 * * *")
     public void sendReminders() {
         List<User> users = userRepo.findAll();
         for (User user : users) {

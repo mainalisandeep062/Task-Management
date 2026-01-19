@@ -27,7 +27,7 @@ public class UserConverter {
         userResponseDTO.setEmail(user.getEmail());
         userResponseDTO.setRole(user.getRole());
         userResponseDTO.setActive(user.getActive());
-
+        userResponseDTO.setCreatedDate(user.getCreatedAt());
         return  userResponseDTO;
     }
 }

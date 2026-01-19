@@ -71,7 +71,8 @@ public class TaskServicesImpl implements TaskServices {
 
     @Override
     public List<TaskResponseDTO> getTaskByAssigneeEmail(String assigneeEmail) {
-        return taskRepo.findByAssigneeEmail(assigneeEmail)
+        Long id = userRepo.findByEmail(assigneeEmail).orElseThrow(() -> new RuntimeException("User not found!!!")).getId();
+        return taskRepo.findByAssigneeId(id)
                 .stream()
                 .map(taskConverter::toTaskResponseDTO)
                 .collect(Collectors.toList());

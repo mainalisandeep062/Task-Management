@@ -4,8 +4,8 @@ import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -25,7 +25,7 @@ public class Task {
     private String description;
 
     @Column(name = "due_date", nullable = true)
-    private Date  dueDate;
+    private LocalDate dueDate;
 
     @Column(name = "status",  nullable = false)
     @Enumerated(EnumType.STRING)

@@ -2,6 +2,9 @@ package com.varosha.springboot.taskmanagement.ServicesImpl;
 
 import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
 import com.varosha.springboot.taskmanagement.DTO.user.UserResponseDTO;
+import com.varosha.springboot.taskmanagement.Enums.TaskStatus;
+import com.varosha.springboot.taskmanagement.Models.Task;
+import com.varosha.springboot.taskmanagement.Repository.TaskRepo;
 import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Services.UserServices;
 import com.varosha.springboot.taskmanagement.converter.TaskConverter;
@@ -20,6 +23,7 @@ public class UserServicesImpl implements UserServices {
     private final UserConverter userConverter;
     private final TaskConverter taskConverter;
     private final ExtractEmail extract;
+    private final TaskRepo taskRepo;
 
     @Override
     public UserResponseDTO getCurrentUserProfile() {
@@ -29,7 +33,7 @@ public class UserServicesImpl implements UserServices {
     }
 
     @Override
-public List<TaskResponseDTO> getUserTasks() {
+    public List<TaskResponseDTO> getUserTasks() {
         List<TaskResponseDTO> tasks = userRepo.findByEmail(extract.getEmail())
                 .map(user -> user.getTasks()
                         .stream()
@@ -38,4 +42,15 @@ public List<TaskResponseDTO> getUserTasks() {
                 .orElseThrow(() -> new RuntimeException("User not found with email : " + extract.getEmail()));
         return tasks;
     }
+
+    @Override
+    public TaskResponseDTO updateTaskStatusById(Long taskId, TaskStatus status) {
+        Task task = userRepo.findByEmail(
+                extract.getEmail()).orElse(null)
+                .getTasks().stream().filter(t -> t.getId().equals(taskId))
+                .findFirst().orElseThrow(() -> new RuntimeException("Task not found!!"));
+        task.setStatus(status);
+        return taskConverter.toTaskResponseDTO(task);
+    }
+
 }

@@ -9,6 +9,4 @@ public class TaskCommentRequestDTO {
     private String commentContent;
     private Long taskId;
     private Long userId;
-    private LocalDateTime commentedAt;
-
 }

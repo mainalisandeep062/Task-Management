@@ -3,20 +3,24 @@ package com.varosha.springboot.taskmanagement.ServicesImpl;
 import com.varosha.springboot.taskmanagement.Configuration.ExtractEmail;
 import com.varosha.springboot.taskmanagement.DTO.notification.NotificationRequestDTO;
 import com.varosha.springboot.taskmanagement.DTO.notification.NotificationResponseDTO;
+import com.varosha.springboot.taskmanagement.Enums.NotificationType;
 import com.varosha.springboot.taskmanagement.Models.Notification;
+import com.varosha.springboot.taskmanagement.Models.Task;
 import com.varosha.springboot.taskmanagement.Models.User;
 import com.varosha.springboot.taskmanagement.Repository.NotificationRepo;
+import com.varosha.springboot.taskmanagement.Repository.TaskRepo;
 import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Services.NotificationServices;
 import com.varosha.springboot.taskmanagement.converter.NotificationConverter;
 import jakarta.transaction.Transactional;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +30,7 @@ public class NotificationServicesImpl implements NotificationServices {
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationConverter converter;
     private final UserRepo userRepo;
+    private final TaskRepo taskRepo;
 
     @Override
     public NotificationResponseDTO send(NotificationRequestDTO requestDto) {
@@ -67,6 +72,7 @@ public class NotificationServicesImpl implements NotificationServices {
     public List<NotificationResponseDTO> getUnreadNotifications(String email) {
         return notificationRepo.findByRecipientId(userRepo.findByEmail(email).orElse(null).getId())
                 .stream()
+                .filter(t -> !t.isRead())
                 .map(converter::toDto)
                 .collect(Collectors.toList());
     }
@@ -119,5 +125,19 @@ public class NotificationServicesImpl implements NotificationServices {
         return notificationRepo.countUnreadByRecipientId(recipientId);
     }
 
+    @Scheduled(fixedRate = 864000000)
+    public void overDueTaskNotification(){
+        List<Task> overDueTasks = taskRepo.findOverdueTasks();
+
+        for(Task task : overDueTasks){
+            NotificationRequestDTO notification = new NotificationRequestDTO();
+            notification.setRecipientId(task.getAssignee().getId());
+            notification.setTitle("Task \"" + task.getTitle() + "\" is OverDue!!!");
+            notification.setMessage("The above mentioned task assigned to you is overdue. Please Update the status.");
+            notification.setType(NotificationType.TASK_OVERDUE);
+
+            send(notification);
+        }
+    }
 
 }

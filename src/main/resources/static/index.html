@@ -42,7 +42,7 @@
         <h2 style="text-align:center">Account Login</h2>
         <div class="input-group"><input type="email" id="email" placeholder="Email" value="sandeep@yopmail.com"></div>
         <div class="input-group">
-            <input type="password" id="password" placeholder="Password" value="password123">
+            <input type="password" id="password" placeholder="Password" value="SystemAdmin@123">
             <button type="button" class="peak-btn" onclick="togglePassword()">👁️</button>
         </div>
         <button onclick="handleLogin()">Sign In</button>
@@ -93,7 +93,6 @@
         }
     }
 
-    // --- NEW: Refresh without Logout ---
     function refreshDashboard() {
         console.log("Refreshing dashboard data...");
         fetchInitialHistory(); // Simply re-fetch from API
