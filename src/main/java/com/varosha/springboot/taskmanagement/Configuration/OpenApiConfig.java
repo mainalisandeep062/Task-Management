@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +21,7 @@ public class OpenApiConfig {
         contact.setEmail("sawondeep4@gmail.com");
         return new OpenAPI()
                 .info(new Info()
-                        .title("Task Management API")
+                        .title("Task Tracker Application")
                         .version("1.0")
                         .description("API documentation for the Task Management System")
                         .contact(contact))
