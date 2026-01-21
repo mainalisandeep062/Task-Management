@@ -1,14 +1,13 @@
-# Use official Eclipse Temurin JDK 17 image
-FROM eclipse-temurin:17-jdk-jammy
-
-# Set working directory
+# Stage 1: Build (Compiles code and generates .jar)
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the Maven-built JAR
-COPY target/*.jar app.jar
-
-# Expose port 8080
+# Stage 2: Run (The actual slim container that goes live)
+FROM eclipse-temurin:17-jdk-jammy
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Command to run your app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]
