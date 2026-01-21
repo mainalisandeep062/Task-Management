@@ -12,7 +12,7 @@ public interface NotificationServices {
 
     List<NotificationResponseDTO> getMyNotifications();
 
-    NotificationResponseDTO markAsRead(Long notificationId);
+    String markAsRead(Long notificationId);
 
     List<NotificationResponseDTO> getUnreadNotifications(String email);
 

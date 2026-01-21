@@ -2,8 +2,8 @@ package com.varosha.springboot.taskmanagement.Controller.EmployeeController;
 
 import com.varosha.springboot.taskmanagement.DTO.standUp.StandUpRequestDTO;
 import com.varosha.springboot.taskmanagement.DTO.standUp.StandUpResponseDTO;
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentRequestDTO;
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentResponseDTO;
+import com.varosha.springboot.taskmanagement.DTO.taskComment.TaskCommentRequestDTO;
+import com.varosha.springboot.taskmanagement.DTO.taskComment.TaskCommentResponseDTO;
 import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
 import com.varosha.springboot.taskmanagement.DTO.user.UserResponseDTO;
 import com.varosha.springboot.taskmanagement.Enums.TaskStatus;

@@ -1,8 +1,8 @@
 package com.varosha.springboot.taskmanagement.ServicesImpl;
 
 import com.varosha.springboot.taskmanagement.Configuration.ExtractEmail;
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentRequestDTO;
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentResponseDTO;
+import com.varosha.springboot.taskmanagement.DTO.taskComment.TaskCommentRequestDTO;
+import com.varosha.springboot.taskmanagement.DTO.taskComment.TaskCommentResponseDTO;
 import com.varosha.springboot.taskmanagement.Enums.Role;
 import com.varosha.springboot.taskmanagement.Models.Task;
 import com.varosha.springboot.taskmanagement.Models.TaskComment;

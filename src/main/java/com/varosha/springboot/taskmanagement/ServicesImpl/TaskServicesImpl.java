@@ -11,6 +11,7 @@ import com.varosha.springboot.taskmanagement.Repository.UserRepo;
 import com.varosha.springboot.taskmanagement.Configuration.ExtractEmail;
 import com.varosha.springboot.taskmanagement.Services.TaskServices;
 import com.varosha.springboot.taskmanagement.converter.TaskConverter;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,16 +34,16 @@ public class TaskServicesImpl implements TaskServices {
         task.setCreatedBy(userRepo.findByEmail(new ExtractEmail().getEmail()).
                 orElseThrow(() -> new RuntimeException("User not found with email: " + new ExtractEmail().getEmail())));
         task.setCreatedAt(LocalDateTime.now());
+        task.setNotified(true);
         Task createdTask = taskRepo.save(task);
 
         notificationService.send(NotificationRequestDTO.builder()
                     .recipientId(task.getAssignee().getId())
-                    .title("You were assigned a new task! \r\n"
-                            + task.getTitle() + "Due :" + task.getDueDate())
-                    .message(task.getDescription())
+                    .title("You were assigned a new task!")
+                    .message(task.getTitle() + " Due : " + task.getDueDate())
+                    .referenceId(task.getId())
                     .type(NotificationType.TASK_ASSIGNED)
                     .build());
-
         return taskConverter.toTaskResponseDTO(createdTask);
     }
 

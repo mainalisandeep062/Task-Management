@@ -20,4 +20,7 @@ public class NotificationRequestDTO {
     private String message;
     @Schema(allowableValues = {"TASK_ASSIGNED", "STANDUP_REMAINDER", "TASK_DUE_APPROACHING", "TASK_OVERDUE"})
     private NotificationType type;
+
+    @Schema(description = "The id of the task that triggers the notification push.")
+    private Long referenceId;
 }

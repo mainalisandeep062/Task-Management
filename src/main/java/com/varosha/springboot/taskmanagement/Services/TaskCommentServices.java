@@ -1,7 +1,7 @@
 package com.varosha.springboot.taskmanagement.Services;
 
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentRequestDTO;
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentResponseDTO;
+import com.varosha.springboot.taskmanagement.DTO.taskComment.TaskCommentRequestDTO;
+import com.varosha.springboot.taskmanagement.DTO.taskComment.TaskCommentResponseDTO;
 
 import java.util.List;
 

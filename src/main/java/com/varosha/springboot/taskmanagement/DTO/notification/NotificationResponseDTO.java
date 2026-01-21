@@ -10,6 +10,7 @@ public class NotificationResponseDTO {
     private String title;
     private String message;
     private NotificationType type;
+    private String recipientEmail;
     private boolean isRead;
     private LocalDateTime createdAt;
 }

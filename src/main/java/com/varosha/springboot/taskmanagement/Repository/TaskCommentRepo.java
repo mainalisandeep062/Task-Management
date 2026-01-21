@@ -1,6 +1,5 @@
 package com.varosha.springboot.taskmanagement.Repository;
 
-import com.varosha.springboot.taskmanagement.DTO.task.TaskCommentResponseDTO;
 import com.varosha.springboot.taskmanagement.DTO.task.TaskResponseDTO;
 import com.varosha.springboot.taskmanagement.Models.TaskComment;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,6 @@
-package com.varosha.springboot.taskmanagement.DTO.task;
+package com.varosha.springboot.taskmanagement.DTO.taskComment;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class TaskCommentRequestDTO {

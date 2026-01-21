@@ -15,6 +15,7 @@ public class NotificationConverter {
         notification.setTitle(requestDto.getTitle());
         notification.setMessage(requestDto.getMessage());
         notification.setType(requestDto.getType());
+        notification.setReferenceId(requestDto.getReferenceId());
         return notification;
     }
 
@@ -28,6 +29,7 @@ public class NotificationConverter {
         responseDto.setMessage(notification.getMessage());
         responseDto.setType(notification.getType());
         responseDto.setRead(notification.isRead());
+        responseDto.setRecipientEmail(notification.getRecipientEmail());
         responseDto.setCreatedAt(notification.getCreatedAt());
 
         return responseDto;

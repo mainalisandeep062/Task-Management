@@ -26,9 +26,14 @@ public class Notification {
 
     private boolean isRead = false;
 
+    private Long referenceId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id", nullable = false)
     private User recipient;
+
+    @Column(nullable = false)
+    private String recipientEmail;
 
     private LocalDateTime createdAt;
 

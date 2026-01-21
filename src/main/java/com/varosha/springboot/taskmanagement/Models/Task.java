@@ -27,6 +27,8 @@ public class Task {
     @Column(name = "due_date", nullable = true)
     private LocalDate dueDate;
 
+    private Boolean notified = false;
+
     @Column(name = "status",  nullable = false)
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
