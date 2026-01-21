@@ -2,14 +2,15 @@ name: Keep Render Awake
 
 on:
   schedule:
-    # This runs every 14 minutes
+    # Runs every 14 minutes to prevent Render from sleeping
     - cron: '*/14 * * * *'
-  workflow_dispatch: # Allows you to run it manually for testing
+  workflow_dispatch: # Allows manual testing in the GitHub Actions tab
 
 jobs:
-  ping_service:
+  ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Send keep-alive request
+      - name: Wake up Render
         run: |
-          curl -I -s https://your-app-name.onrender.com/actuator/health | grep "HTTP/"
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://task-management-95gm.onrender.com/actuator/health)
+          echo "Render responded with status: $STATUS_CODE"
