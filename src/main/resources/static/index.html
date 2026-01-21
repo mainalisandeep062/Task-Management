@@ -78,7 +78,7 @@
     async function handleLogin() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        const res = await fetch('http://localhost:8080/api/auth/login', {
+        const res = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ email, password })
@@ -99,7 +99,7 @@
     }
 
     function fetchInitialHistory() {
-        fetch('http://localhost:8080/api/notification/my-notification', {
+        fetch('/api/notification/my-notification', {
             headers: {'Authorization': `Bearer ${token}`}
         })
             .then(r => r.json())
@@ -112,7 +112,7 @@
     function initApp() {
         fetchInitialHistory();
 
-        const socket = new SockJS('http://localhost:8080/ws-notifications');
+        const socket = new SockJS('/ws-notifications');
         stompClient = Stomp.over(socket);
         stompClient.connect({'Authorization': `Bearer ${token}`}, () => {
 
@@ -141,14 +141,14 @@
     }
 
     function markSingleRead(id) {
-        fetch(`http://localhost:8080/api/notification/${id}/read`, {
+        fetch(`/api/notification/${id}/read`, {
             method: 'PATCH',
             headers: {'Authorization': `Bearer ${token}`}
         });
     }
 
     function markAllAsRead() {
-        fetch('http://localhost:8080/api/notification', {
+        fetch('/api/notification', {
             method: 'PATCH',
             headers: {'Authorization': `Bearer ${token}`}
         });
