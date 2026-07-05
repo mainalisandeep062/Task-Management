@@ -211,4 +211,3 @@ app:
 
 ---
 
-*Note: This README covers the backend API only. If you'd like frontend details included, share the frontend directory or `pom.xml` / `build.gradle` and I can expand it.*
